@@ -38,7 +38,7 @@ function trinket(itemstack, user, pointed_thing)
 end
 
 core.register_craftitem("hexanti:trinket", {
-    description = "casts a stored hex",
+    description = "trinket",
     inventory_image = "hexanti_trinket.png",
     stack_max = 1,
     on_use = trinket,
