@@ -33,12 +33,16 @@ function trinket(itemstack, user, pointed_thing)
         core.show_formspec(user:get_player_name(), "hexanti:hexInput", table.concat(formspec, ""))
 
     else
-        Hexcasting.castHex(itemstack:get_meta():get_string("hex"), user)
+        local status, error = pcall(Hexcasting.castHex,itemstack:get_meta():get_string("hex"), user)
+        if not status then
+            print(error)
+            core.chat_send_player(user:get_player_name(), error)
+        end
     end
 end
 
 core.register_craftitem("hexanti:trinket", {
-    description = "trinket",
+    description = "Trinket",
     inventory_image = "hexanti_trinket.png",
     stack_max = 1,
     on_use = trinket,
