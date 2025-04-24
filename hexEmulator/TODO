@@ -1,0 +1,5 @@
+[ ] move anglesigs to plugins
+[ ] move special handlers to plugins
+[ ] make http example plugin
+[ ] make hexutils lib, with functions that lots of patterns might use
+[ ] execution stepping / debugging

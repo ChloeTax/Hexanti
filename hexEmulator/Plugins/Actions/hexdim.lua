@@ -1,0 +1,12 @@
+Hexcasting.Actions["hexdim:dim/create"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/enter"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/kidnap"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/kick"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/downgrade"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/downgrade/pos"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/rel/to"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/rel/from"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/cast/activate"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/cast/deactivate"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/carved"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexdim:dim/time"] = function(self, castEnv) Unimplemented(self) end
