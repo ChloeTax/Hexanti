@@ -3,10 +3,10 @@ Hexcasting = {
     Actions = {},
     Patterns = {}
 }
-dofile("hexEmulator/json.lua")
-dofile("hexEmulator/hexiotas.lua")
-dofile("hexEmulator/hexpatterns.lua")
-dofile("hexEmulator/hexactions.lua")
+dofile(core.get_modpath("hexanti") .. "/hexEmulator/json.lua")
+dofile(core.get_modpath("hexanti") .. "/hexEmulator/hexiotas.lua")
+dofile(core.get_modpath("hexanti") .. "/hexEmulator/hexpatterns.lua")
+dofile(core.get_modpath("hexanti") .. "/hexEmulator/hexactions.lua")
 
 function stringSplit(pString, pPattern)
     local Table = {}

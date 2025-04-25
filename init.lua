@@ -1,6 +1,6 @@
 print("This file will be run at load time!")
 
-dofile("./hexEmulator/hexEmulator.lua")
+dofile(core.get_modpath("hexanti") .. "/hexEmulator/hexEmulator.lua")
 
 
 
@@ -35,7 +35,7 @@ function trinket(itemstack, user, pointed_thing)
     else
         local status, error = pcall(Hexcasting.castHex,itemstack:get_meta():get_string("hex"), user)
         if not status then
-            print(error)
+            dbg.pp(error)
             core.chat_send_player(user:get_player_name(), error)
         end
     end
@@ -45,5 +45,6 @@ core.register_craftitem("hexanti:trinket", {
     description = "Trinket",
     inventory_image = "hexanti_trinket.png",
     stack_max = 1,
-    on_use = trinket,
+    on_place = trinket,
+    on_secondary_use = trinket,
 })

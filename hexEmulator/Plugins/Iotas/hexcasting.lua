@@ -57,6 +57,13 @@ Hexcasting.Iotas["hexcasting:vec3"] = {
         self.__index = self
         return setmetatable(data,self)
     end,
+    add = function(self, other)
+        if other.Type == "hexcasting:double" then
+            return Hexcasting.Iotas["hexcasting:vec3"]:new(self.x + other.number, self.y + other.number, self.z + other.number)
+        elseif other.Type == "hexcasting:vec3" then
+            return Hexcasting.Iotas["hexcasting:vec3"]:new(self.x + other.x, self.y + other.y, self.z + other.z)
+        end
+    end,
     multiply = function(self, other)
         if other.Type == "hexcasting:double" then
             return Hexcasting.Iotas["hexcasting:vec3"]:new(self.x * other.number, self.y * other.number, self.z * other.number)
@@ -150,13 +157,18 @@ Hexcasting.Iotas["hexcasting:entity"] = {
         return self.entity == other.entity
     end,
     getName = function(self)
-        return self.entity:get_player_name()
+        local name = self.entity:get_luaentity()
+        if name then
+            return name.name
+        else
+            return self.entity:get_player_name()
+        end
     end,
     copy = function(self)
         return Hexcasting.Iotas["hexcasting:entity"]:new(self.entity)
     end,
     display = function(self) 
-        return self.entity:get_player_name()
+        return self:getName()
     end,
     -- add = function(self,other)
     --     if self.Type ~= other.Type then error(table.concat({"cannot add ", self.Type, " to ", other.Type})) end

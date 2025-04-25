@@ -1,7 +1,6 @@
 
-for _,file in pairs(core.get_dir_list("hexEmulator/Plugins/Iotas")) do
-    print("hexEmulator/Plugins/Iotas/" .. file)
-    dofile("hexEmulator/Plugins/Iotas/" .. file)
+for _,file in pairs(core.get_dir_list(core.get_modpath("hexanti") .. "/hexEmulator/Plugins/Iotas")) do
+    dofile(core.get_modpath("hexanti") .. "/hexEmulator/Plugins/Iotas/" .. file)
 end
 
 

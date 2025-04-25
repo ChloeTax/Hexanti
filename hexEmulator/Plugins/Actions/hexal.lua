@@ -8,11 +8,11 @@ Hexcasting.Actions["hexal:factorial"] = function(self, castEnv) Unimplemented(se
 Hexcasting.Actions["hexal:running/sum"] = function(self, castEnv)
     local inputList = castEnv.stack:pop().list --TODO: use the iota math ops
     local outputList = Hexcasting.Iotas["hexcasting:list"]:new()
-    local sum = 0
+    local sum = inputList[1]:copy():multiply(Hexcasting.Iotas["hexcasting:double"]:new(0))
     for _,number in pairs(inputList) do
-        local newnum = number.number + sum
-        outputList:append(Hexcasting.Iotas["hexcasting:double"]:new(newnum))
-        sum = sum + number.number
+        local newnum = number:add(sum)
+        outputList:append(newnum:copy())
+        sum = sum:add(number)
     end
     castEnv.stack:push(outputList)
 end

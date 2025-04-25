@@ -2,9 +2,8 @@ function Unimplemented(self)
     error(table.concat({self.Name, " (",self.ID, ") Unimplemented"}),-1)
 end
 
-for _,file in pairs(core.get_dir_list("hexEmulator/Plugins/Actions")) do
-    print("hexEmulator/Plugins/Actions/" .. file)
-    dofile("hexEmulator/Plugins/Actions/" .. file)
+for _,file in pairs(core.get_dir_list(core.get_modpath("hexanti") .. "/hexEmulator/Plugins/Actions")) do
+    dofile(core.get_modpath("hexanti") .. "/hexEmulator/Plugins/Actions/" .. file)
 end
 
 function eval(castEnv,iota)

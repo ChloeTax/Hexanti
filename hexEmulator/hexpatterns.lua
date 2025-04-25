@@ -1,4 +1,4 @@
-f_registry = io.open("hexEmulator/registry.json","r")
+f_registry = io.open(core.get_modpath("hexanti") .. "/hexEmulator/registry.json","r")
 registry = json.decode(f_registry:read("*a"))
 f_registry.close()
 

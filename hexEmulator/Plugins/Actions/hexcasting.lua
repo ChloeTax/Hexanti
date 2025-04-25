@@ -1,15 +1,54 @@
 
 Hexcasting.Actions["hexcasting:get_caster"] = function(self, castEnv) castEnv.stack:push(castEnv.caster:copy()) end
-Hexcasting.Actions["hexcasting:entity_pos/eye"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:entity_pos/foot"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:entity_pos/eye"] = function(self, castEnv)
+    local ent = castEnv.stack:pop().entity
+
+    local pos = ent:get_pos()
+    
+    pos.y = pos.y + ent:get_properties().eye_height
+
+    castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(pos.x,pos.y,pos.z))
+end
+Hexcasting.Actions["hexcasting:entity_pos/foot"] = function(self, castEnv)
+    local pos = castEnv.stack:pop().entity:get_pos()
+    castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(pos.x,pos.y,pos.z))  
+end
 Hexcasting.Actions["hexcasting:get_entity_look"] = function(self, castEnv)
-    dir = castEnv.stack:pop().entity:get_look_dir()
+    local dir = castEnv.stack:pop().entity:get_look_dir()
     castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(dir.x,dir.y,dir.z))  
 end
-Hexcasting.Actions["hexcasting:get_entity_height"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:get_entity_velocity"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:raycast"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:raycast/axis"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:get_entity_height"] = function(self, castEnv)
+    castEnv.stack:push(Hexcasting.Iotas["hexcasting:double"]:new(castEnv.stack:pop().entity:get_properties().eye_height))
+end
+Hexcasting.Actions["hexcasting:get_entity_velocity"] = function(self, castEnv)
+    local vel = castEnv.stack:pop().entity:get_velocity()
+    castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(vel.x,vel.y,vel.z))  
+end
+Hexcasting.Actions["hexcasting:raycast"] = function(self, castEnv)
+    local dir = castEnv.stack:pop()
+    local origin = castEnv.stack:pop()
+
+    local ray = Raycast(origin, origin:add(dir:multiply(Hexcasting.Iotas["hexcasting:double"]:new(32))), false, false)
+    local hit 
+    for pointed_thing in ray do
+        hit = pointed_thing.under
+        break
+    end
+    castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(hit.x,hit.y,hit.z))  
+end
+Hexcasting.Actions["hexcasting:raycast/axis"] = function(self, castEnv)
+    local dir = castEnv.stack:pop()
+   local origin = castEnv.stack:pop()
+
+    local ray = Raycast(origin, origin:add(dir:multiply(Hexcasting.Iotas["hexcasting:double"]:new(32))), false, false)
+    local hit 
+    for pointed_thing in ray do
+        hit = pointed_thing.intersection_normal
+        break
+    end
+    castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(hit.x,hit.y,hit.z))  
+
+end
 Hexcasting.Actions["hexcasting:raycast/entity"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:circle/impetus_pos"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:circle/impetus_dir"] = function(self, castEnv) Unimplemented(self) end
@@ -22,8 +61,24 @@ Hexcasting.Actions["hexcasting:swap"] = function(self, castEnv)
     castEnv.stack:push(iota1)
     castEnv.stack:push(iota2)
 end
-Hexcasting.Actions["hexcasting:rotate"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:rotate_reverse"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:rotate"] = function(self, castEnv)
+    local iota1 = castEnv.stack:pop()
+    local iota2 = castEnv.stack:pop()
+    local iota3 = castEnv.stack:pop()
+
+    castEnv.stack:push(iota2)
+    castEnv.stack:push(iota1)
+    castEnv.stack:push(iota3)
+end
+Hexcasting.Actions["hexcasting:rotate_reverse"] = function(self, castEnv)
+    local iota1 = castEnv.stack:pop()
+    local iota2 = castEnv.stack:pop()
+    local iota3 = castEnv.stack:pop()
+
+    castEnv.stack:push(iota1)
+    castEnv.stack:push(iota3)
+    castEnv.stack:push(iota2)
+end
 Hexcasting.Actions["hexcasting:duplicate"] = function(self, castEnv) castEnv.stack:push(castEnv.stack.list[castEnv.stack:length()]:copy()) end
 Hexcasting.Actions["hexcasting:over"] = function(self, castEnv)
     if castEnv.stack:length() > 1 then
@@ -40,7 +95,15 @@ Hexcasting.Actions["hexcasting:tuck"] = function(self, castEnv)
         error("Undertaker's Gambit: Expected at least 2 iotas on the stack",-1)
     end
 end
-Hexcasting.Actions["hexcasting:2dup"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:2dup"] = function(self, castEnv)
+    local iota1 = castEnv.stack:pop()
+    local iota2 = castEnv.stack:pop()
+
+    castEnv.stack:push(iota2)
+    castEnv.stack:push(iota1)
+    castEnv.stack:push(iota2:copy())
+    castEnv.stack:push(iota1:copy())
+end
 Hexcasting.Actions["hexcasting:stack_len"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:double"]:new(castEnv.stack:length())) end
 Hexcasting.Actions["hexcasting:duplicate_n"] = function(self, castEnv)
     local count = castEnv.stack:pop().number
@@ -103,15 +166,28 @@ Hexcasting.Actions["hexcasting:logarithm"] = function(self, castEnv) Unimplement
 Hexcasting.Actions["hexcasting:modulo"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:unique"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:print"] = function(self, castEnv) core.chat_send_player(castEnv.caster:getName(), castEnv.stack.list[castEnv.stack:length()]:display()) end
-Hexcasting.Actions["hexcasting:explode"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:explode/fire"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:explode"] = function(self, castEnv)
+    local pow = castEnv.stack:pop()
+    local pos = castEnv.stack:pop()
+
+    mcl_explosions.explode(pos, pow.number, {drop_chance=1, max_blast_resistance = 1}, castEnv.caster.entity)
+end
+Hexcasting.Actions["hexcasting:explode/fire"] = function(self, castEnv)
+    local pow = castEnv.stack:pop()
+    local pos = castEnv.stack:pop()
+
+    mcl_explosions.explode(pos, pow.number, {drop_chance = 1, fire = true, max_blast_resistance = 1}, castEnv.caster.entity)
+end
 Hexcasting.Actions["hexcasting:add_motion"] = function(self, castEnv)
     vel = castEnv.stack:pop()
     ent = castEnv.stack:pop()
     ent.entity:add_velocity(vel)
 end
 Hexcasting.Actions["hexcasting:blink"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:break_block"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:break_block"] = function(self, castEnv)
+    local pos = castEnv.stack:pop()
+    core.dig_node(pos,castEnv.caster.entity)
+end
 Hexcasting.Actions["hexcasting:place_block"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:colorize"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:cycle_variant"] = function(self, castEnv) Unimplemented(self) end
@@ -119,8 +195,14 @@ Hexcasting.Actions["hexcasting:create_water"] = function(self, castEnv) Unimplem
 Hexcasting.Actions["hexcasting:destroy_water"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:ignite"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:extinguish"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:conjure_block"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:conjure_light"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:conjure_block"] = function(self, castEnv)
+    local pos = castEnv.stack:pop()
+    core.set_node(pos,{name="mcl_core:glass"})
+end
+Hexcasting.Actions["hexcasting:conjure_light"] = function(self, castEnv)
+    local pos = castEnv.stack:pop()
+    core.set_node(pos,{name="mcl_torches:torch"})
+end
 Hexcasting.Actions["hexcasting:bonemeal"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:recharge"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:erase"] = function(self, castEnv) Unimplemented(self) end
@@ -168,8 +250,12 @@ Hexcasting.Actions["hexcasting:readable"] = function(self, castEnv) Unimplemente
 Hexcasting.Actions["hexcasting:readable/entity"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:writable"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:writable/entity"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:read/local"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:write/local"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:read/local"] = function(self, castEnv)
+    castEnv.stack:push(castEnv.ravenmind:copy())
+end
+Hexcasting.Actions["hexcasting:write/local"] = function(self, castEnv)
+    castEnv.ravenmind = castEnv.stack:pop()
+end
 Hexcasting.Actions["hexcasting:thanatos"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:const/null"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:null"]:new()) end
 Hexcasting.Actions["hexcasting:const/true"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:bool"]:new(true)) end
@@ -180,7 +266,7 @@ Hexcasting.Actions["hexcasting:const/vec/pz"] = function(self, castEnv) castEnv.
 Hexcasting.Actions["hexcasting:const/vec/nx"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(-1,0,0)) end
 Hexcasting.Actions["hexcasting:const/vec/ny"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(0,-1,0)) end
 Hexcasting.Actions["hexcasting:const/vec/nz"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(0,0,-1)) end
-Hexcasting.Actions["hexcasting:const/vec/0"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:const/vec/0"] = function(self, castEnv) castEnv.stack:push(Hexcasting.Iotas["hexcasting:vec3"]:new(0,0,0)) end
 Hexcasting.Actions["hexcasting:const/double/pi"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:const/double/tau"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:const/double/e"] = function(self, castEnv) Unimplemented(self) end
@@ -190,7 +276,17 @@ Hexcasting.Actions["hexcasting:get_entity/monster"] = function(self, castEnv) Un
 Hexcasting.Actions["hexcasting:get_entity/item"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:get_entity/player"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:get_entity/living"] = function(self, castEnv) Unimplemented(self) end
-Hexcasting.Actions["hexcasting:zone_entity"] = function(self, castEnv) Unimplemented(self) end
+Hexcasting.Actions["hexcasting:zone_entity"] = function(self, castEnv)
+    local radius = castEnv.stack:pop().number
+    local center = castEnv.stack:pop()
+    local entities = core.get_objects_inside_radius(center, radius)
+    local outputList = Hexcasting.Iotas["hexcasting:list"]:new()
+    for _,entity in pairs(entities) do
+        outputList:append(Hexcasting.Iotas["hexcasting:entity"]:new(entity))
+    end
+    castEnv.stack:push(outputList)
+
+end
 Hexcasting.Actions["hexcasting:zone_entity/animal"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:zone_entity/not_animal"] = function(self, castEnv) Unimplemented(self) end
 Hexcasting.Actions["hexcasting:zone_entity/monster"] = function(self, castEnv) Unimplemented(self) end
