@@ -35,7 +35,6 @@ function trinket(itemstack, user, pointed_thing)
     else
         local status, error = pcall(Hexcasting.castHex,itemstack:get_meta():get_string("hex"), user)
         if not status then
-            dbg.pp(error)
             core.chat_send_player(user:get_player_name(), error)
         end
     end
