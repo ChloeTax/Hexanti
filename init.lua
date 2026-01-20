@@ -1,8 +1,10 @@
 print("This file will be run at load time!")
 
-dofile(core.get_modpath("hexanti") .. "/hexEmulator/hexEmulator.lua")
+platform = dofile(core.get_modpath("hexanti") .. "/platform.lua")
 
+Hexcasting = platform.require("hexEmulator/Hexcasting")
 
+local hexpatternParser = platform.require("jankyHexpatternParser")
 
 
 core.register_on_player_receive_fields(function(player, formname, fields)
@@ -18,7 +20,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 
-function trinket(itemstack, user, pointed_thing)
+function trinket(itemstack, user)
 
     if user:get_player_control().sneak then
 
@@ -33,9 +35,14 @@ function trinket(itemstack, user, pointed_thing)
         core.show_formspec(user:get_player_name(), "hexanti:hexInput", table.concat(formspec, ""))
 
     else
-        local status, error = pcall(Hexcasting.castHex,itemstack:get_meta():get_string("hex"), user)
+        local hex = hexpatternParser(itemstack:get_meta():get_string("hex"))
+        local caster = Hexcasting.Iotas.hexcasting.entity:new(user)
+
+        hex = Hexcasting.buildCast(hex, caster)
+
+        local status, error = pcall(hex.eval, hex)
         if not status then
-            core.chat_send_player(user:get_player_name(), error)
+            core.chat_send_player(user:get_player_name(), tostring(error))
         end
     end
 end
@@ -46,4 +53,13 @@ core.register_craftitem("hexanti:trinket", {
     stack_max = 1,
     on_place = trinket,
     on_secondary_use = trinket,
+})
+
+core.register_craft({
+	output = "hexanti:trinket 1",
+	recipe = {
+		{"",                    "mcl_core:iron_ingot", ""},
+		{"mcl_core:iron_ingot", "mcl_amethyst:amethyst_shard", "mcl_core:iron_ingot"},
+		{"",                    "mcl_core:iron_ingot", ""},
+	}
 })

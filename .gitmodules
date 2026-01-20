@@ -1,0 +1,3 @@
+[submodule "hexEmulator"]
+	path = hexEmulator
+	url = git@github.com:ChloeTax/HexLua.git
