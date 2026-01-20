@@ -54,18 +54,18 @@ return {
             entity.entity:add_velocity(vector)
         end,
         get_pos = function(entity)
-            local pos = entity:get_pos()
+            local pos = entity.entity:get_pos()
             return Hexcasting.Iotas.hexcasting.vec3:new(pos.x,pos.y,pos.z)
         end,
         get_velocity = function(entity)
-            local pos = entity:get_velocity()
+            local pos = entity.entity:get_velocity()
             return Hexcasting.Iotas.hexcasting.vec3:new(pos.x,pos.y,pos.z)
         end,
         eye_height = function(entity)
             return Hexcasting.Iotas.hexcasting.double:new(entity.entity:get_properties().eye_height)
         end,
         get_look_dir = function(entity)
-            local pos = entity:get_look_dir()
+            local pos = entity.entity:get_look_dir()
             return Hexcasting.Iotas.hexcasting.vec3:new(pos.x,pos.y,pos.z)
         end,
         get_entities = function(center, radius, filter)
@@ -98,11 +98,11 @@ return {
         local raycast_types = {        
             block = {"under", false},
             block_normal = {"intersection_normal", false},
-            entity = {"entity", true}
+            entity = {"entity", true} --TODO
         }
 
         for pointed_thing in ray do
-            hit = pointed_thing.intersection_normal
+            hit = pointed_thing[raycast_types[type][1]]
             break
         end
 
